@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:
+       - image: yiyiru/web-ban-hang-wordpress:v1
+         name: wordpress
+         env:
+         - name: WORDPRESS_DB_HOST
+           value: wordpress-mysql:3306
+         - name: WORDPRESS_DB_USER
+           valueFrom:
+             secretKeyRef:
+               key: user
+               name: mysql-pass
+         - name: WORDPRESS_DB_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: mysql-pass
+               key: password
+         ports:
+          - containerPort: 80
+            name: http-wordpress
+         volumeMounts:
+           - name: wordpress-persistent-storage
+             mountPath: /var/www/html
+         #resources:
+          #limits:
+            #memory: "128Mi"
+            #cpu: "500m"
+      imagePullSecrets:
+        - name: dath
+      volumes:
+       - name: wordpress-persistent-storage
+         persistentVolumeClaim:
+          claimName: wp-pv-claim

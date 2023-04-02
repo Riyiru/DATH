@@ -1,0 +1,14 @@
+secretGenerator:
+- name: mysql-pass
+  literals:
+  - password=admin
+  - user=admin
+  - database=wordpress
+  - root-password=somewpordpress
+resources:
+  - mysql-deployment.yaml
+  - mysql-service.yaml
+  #- mysql-storage.yaml
+  - wordpress-deployment.yaml
+  - wordpress-service.yaml
+  #- wordpress-storage.yaml
